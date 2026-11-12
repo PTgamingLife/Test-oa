@@ -5,10 +5,10 @@
     "line_messaging": "@428gufyz",
     "line_login": "done"
   },
-  "finished_at": "2026-11-12T03:11:03.705Z",
+  "finished_at": "2026-11-12T03:12:11.435Z",
   "px": "test1",
   "pages_url": "https://ptgaminglife.github.io/Test-oa/",
   "project_ref": null,
   "basic_id": "@428gufyz",
-  "error": "api.supabase.com/v1/projects → HTTP 400"
+  "error": "api.supabase.com/v1/projects → HTTP 400：The following organization members have reached their maximum limits for the number of active free projects within organizations where they are an administrator or owner: poting75321-commits (2 projec"
 }
