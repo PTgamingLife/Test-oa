@@ -10,14 +10,14 @@
     "supabase_secrets": "done",
     "functions": "done",
     "webhook": {
-      "success": false,
-      "status": 0,
-      "reason": "REQUEST_TIMEOUT"
+      "success": true,
+      "status": 200,
+      "reason": "OK"
     },
-    "owner_menu": "ready",
+    "owner_menu": "linked",
     "liff_config": "done"
   },
-  "finished_at": "2026-11-12T04:30:07.068Z",
+  "finished_at": "2026-11-12T04:42:40.517Z",
   "px": "test1",
   "pages_url": "https://ptgaminglife.github.io/Test-oa/",
   "project_ref": "hhcubvixldieuwdeqnwc",
