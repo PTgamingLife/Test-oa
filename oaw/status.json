@@ -4,12 +4,13 @@
     "render": "done",
     "line_messaging": "@428gufyz",
     "line_login": "done",
-    "supabase_project": "hhcubvixldieuwdeqnwc"
+    "supabase_project": "hhcubvixldieuwdeqnwc",
+    "database": "done"
   },
-  "finished_at": "2026-11-12T03:38:23.422Z",
+  "finished_at": "2026-11-12T03:39:59.682Z",
   "px": "test1",
   "pages_url": "https://ptgaminglife.github.io/Test-oa/",
   "project_ref": "hhcubvixldieuwdeqnwc",
   "basic_id": "@428gufyz",
-  "error": "OAW_BIND_CODE 必須是 6 位數字"
+  "error": "api.line.me/liff/v1/apps → HTTP 404：no LIFF app found for channel 2012562021."
 }
