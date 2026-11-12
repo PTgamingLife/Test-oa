@@ -1,2 +1,1 @@
-// Written by scripts/oaw-setup.mjs during the build. Public values only.
-window.OAW = null;
+window.OAW = {"px":"test1","liffId":"2012562021-G27cELSR","api":"https://hhcubvixldieuwdeqnwc.supabase.co/functions/v1/test1-api"};

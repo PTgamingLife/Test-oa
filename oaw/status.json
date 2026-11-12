@@ -1,5 +1,5 @@
 {
-  "ok": false,
+  "ok": true,
   "steps": {
     "render": "done",
     "line_messaging": "@428gufyz",
@@ -7,13 +7,19 @@
     "supabase_project": "hhcubvixldieuwdeqnwc",
     "database": "done",
     "liff": "2012562021-G27cELSR",
-    "supabase_secrets": "done"
+    "supabase_secrets": "done",
+    "functions": "done",
+    "webhook": {
+      "success": true,
+      "status": 200,
+      "reason": "OK"
+    },
+    "liff_config": "done"
   },
-  "finished_at": "2026-11-12T03:40:49.712Z",
+  "finished_at": "2026-11-12T03:41:59.317Z",
   "px": "test1",
   "pages_url": "https://ptgaminglife.github.io/Test-oa/",
   "project_ref": "hhcubvixldieuwdeqnwc",
   "basic_id": "@428gufyz",
-  "liff_url": "https://liff.line.me/2012562021-G27cELSR",
-  "error": "Command failed: supabase functions deploy test1-webhook --project-ref hhcubvixldieuwdeqnwc --no-verify-jwt --use-api --workdir build"
+  "liff_url": "https://liff.line.me/2012562021-G27cELSR"
 }
