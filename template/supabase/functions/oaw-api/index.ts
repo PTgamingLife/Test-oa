@@ -2,9 +2,10 @@
 // carries a LIFF ID token that is verified with LINE before anything is returned.
 import { publicConfig, richMenu } from '../_shared/logic.ts';
 import { lineClient, statelessToken, verifyIdToken } from '../_shared/line.ts';
-import { env, loadConfig, member, ownerId, upsertMember } from '../_shared/store.ts';
+import { apricoKey, env, loadConfig, member, ownerId, upsertMember } from '../_shared/store.ts';
 import { PX } from '../_shared/px.ts';
 import {
+  DEFAULT_SUBSCRIBE_URL,
   EXAMPLES,
   INTERFACE_TEMPLATES,
   MONTHLY_FEE,
@@ -12,14 +13,14 @@ import {
   TUTORIAL,
 } from '../_shared/onboarding.ts';
 
-const DEFAULT_SUBSCRIBE_URL = 'https://liff.line.me/2012197506-Vmb4O5iT/build.html';
+type Quota = { paid: boolean; percentLeft?: number; extraTwdLeft?: number; paidUntil?: string };
 
-/** Subscription state comes from Aprico; anything other than a clear "paid" counts as unpaid. */
-async function isPaid() {
+/** Subscription quota from Aprico; anything other than a clear "paid" counts as unpaid. */
+async function quota(): Promise<Quota> {
   const base = env('APRICO_URL'),
     url = base && `${base}/status`,
-    key = env('APRICO_KEY');
-  if (!url || !key) return false;
+    key = await apricoKey();
+  if (!url || !key) return { paid: false };
   try {
     const res = await fetch(url, {
       method: 'POST',
@@ -27,9 +28,16 @@ async function isPaid() {
       body: '{}',
       signal: AbortSignal.timeout(5000),
     });
-    return res.ok && (await res.json())?.paid === true;
+    const q = res.ok ? await res.json() : null;
+    if (q?.paid !== true) return { paid: false };
+    return {
+      paid: true,
+      percentLeft: Math.max(0, Math.min(100, Number(q.percentLeft) || 0)),
+      extraTwdLeft: Math.max(0, Number(q.extraTwdLeft) || 0),
+      paidUntil: typeof q.paidUntil === 'string' ? q.paidUntil : '',
+    };
   } catch {
-    return false;
+    return { paid: false };
   }
 }
 
@@ -95,7 +103,7 @@ Deno.serve(async (req) => {
       const view = body.view === 'interface' ? 'interface' : 'secretary';
       return respond({
         view,
-        paid: await isPaid(),
+        ...(await quota()),
         fee: MONTHLY_FEE,
         subscribeUrl: env('APRICO_SUBSCRIBE_URL') || DEFAULT_SUBSCRIBE_URL,
         templates: view === 'interface' ? INTERFACE_TEMPLATES : SECRETARY_TEMPLATES,

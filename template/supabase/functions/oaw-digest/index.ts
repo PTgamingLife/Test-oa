@@ -3,9 +3,12 @@
 // which both the workflow (GitHub secret) and this function (Supabase secret) already hold.
 import { lineClient, statelessToken } from '../_shared/line.ts';
 import { digestCard, digestKey, digestRows } from '../_shared/digest.ts';
+import { noticeCard, quotaCard } from '../_shared/onboarding.ts';
 import {
+  apricoKey,
   env,
   markProcessed,
+  onceToday,
   ownerId,
   pendingMessages,
   purgeOldMessages,
@@ -24,7 +27,7 @@ Deno.serve(async (req) => {
 
   await purgeOldMessages();
   const base = env('APRICO_URL'),
-    key = env('APRICO_KEY'),
+    key = await apricoKey(),
     owner = await ownerId();
   if (!base || !key || !owner) return json({ skipped: 'not_configured' });
   const msgs = await pendingMessages();
@@ -47,9 +50,11 @@ Deno.serve(async (req) => {
   const token = await statelessToken(env('LINE_MSG_ID'), secret);
   const line = lineClient(token);
   if (res.status === 402) {
-    await line.push(owner, [
-      { type: 'text', text: '本月額度已用完，今天的對話先保留，加購或下個月後會再整理。' },
-    ]);
+    if (await onceToday('quota'))
+      await line.push(owner, [
+        noticeCard('今天的紀錄先保留', '額度恢復後會一起整理，不會遺漏。'),
+        quotaCard(env('APRICO_SUBSCRIBE_URL')),
+      ]);
     return json({ error: 'points_insufficient' }, 402);
   }
   if (!res.ok) return json({ error: 'aprico_failed', status: res.status }, 502);
