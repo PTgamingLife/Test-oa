@@ -20,7 +20,8 @@ const step = (name, value = 'done') => {
 };
 
 export function inputs(env = process.env) {
-  const px = (env.OAW_PX ?? '').trim();
+  // Lowercase so a phone keyboard's automatic capital ("Test1") still works.
+  const px = (env.OAW_PX ?? '').trim().toLowerCase();
   if (!/^[a-z][a-z0-9]{1,7}$/.test(px)) throw Error('OAW_PX 必須是 2–8 個小寫英數字，字母開頭');
   const repo = (env.GITHUB_REPOSITORY ?? '').trim();
   const [owner, name] = repo.split('/');
@@ -70,7 +71,20 @@ async function api(base, path, { token, method = 'GET', body, form } = {}) {
     signal: AbortSignal.timeout(60_000),
   });
   const text = await res.text();
-  if (!res.ok) throw Error(`${new URL(base).host}${path.split('?')[0]} → HTTP ${res.status}`);
+  if (!res.ok) {
+    // Error bodies from these APIs carry a reason (never our secrets); keep a short, single-line part.
+    let reason = '';
+    try {
+      const j = JSON.parse(text);
+      reason = j.message ?? j.error_description ?? j.error ?? '';
+    } catch {
+      reason = text;
+    }
+    reason = String(reason).replace(/\s+/g, ' ').slice(0, 200);
+    throw Error(
+      `${new URL(base).host}${path.split('?')[0]} → HTTP ${res.status}${reason ? `：${reason}` : ''}`,
+    );
+  }
   return text ? JSON.parse(text) : {};
 }
 
@@ -91,7 +105,13 @@ async function lineToken(id, secret) {
 async function supabaseProject(token, px, previous) {
   const known = E('OAW_SB_REF') || previous;
   if (known) return known;
-  const orgs = await api(SB, '/v1/organizations', { token });
+  const orgs = await api(SB, '/v1/organizations', { token }).catch((e) => {
+    if (/HTTP 40[13]/.test(e.message))
+      throw Error(
+        'Supabase Token 沒有建立專案的權限：請改用帳號層級的 Access Token，或在 Variables 設定 OAW_SB_REF 使用既有專案',
+      );
+    throw e;
+  });
   const org = E('OAW_SB_ORG') || orgs[0]?.id;
   if (!org) throw Error('找不到 Supabase 組織');
   const created = await api(SB, '/v1/projects', {
