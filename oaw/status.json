@@ -1,6 +1,14 @@
 {
   "ok": false,
-  "steps": {},
-  "finished_at": "2026-11-12T02:59:59.227Z",
-  "error": "OAW_PX 必須是 2–8 個小寫英數字，字母開頭"
+  "steps": {
+    "render": "done",
+    "line_messaging": "@428gufyz",
+    "line_login": "done"
+  },
+  "finished_at": "2026-11-12T03:06:58.494Z",
+  "px": "test1",
+  "pages_url": "https://ptgaminglife.github.io/Test-oa/",
+  "project_ref": null,
+  "basic_id": "@428gufyz",
+  "error": "api.supabase.com/v1/organizations → HTTP 403"
 }
